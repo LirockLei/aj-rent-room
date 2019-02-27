@@ -68,4 +68,37 @@ def comment():
     return jsonify({'code': 200, 'msg': '请求成功'})
 
 
+# 客户订单
+@order_blue.route('/lorders/', methods=['GET'])
+def lorders():
+    return render_template('lorders.html')
+
+
+@order_blue.route('/my_lorders/', methods=['GET'])
+def my_lorders():
+    orders = Order.query.all()
+    data = [order.to_dict() for order in orders]
+    return jsonify({'code': 200, 'msg': '请求成功', 'data': data})
+
+
+# 改变订单状态
+@order_blue.route('/order_accept/', methods=['POST'])
+def order_accept():
+    order_id = request.form.get('order_id')
+    order = Order.query.filter_by(id=order_id).first()
+    # 修改订单的状态
+    order.status = 'WAIT_PAYMENT'
+    order.add_update()
+    return jsonify({'code': 200, 'msg': '请求成功'})
+
+
+@order_blue.route('/order_reject/', methods=['POST'])
+def order_reject():
+    order_id = request.form.get('order_id')
+    order = Order.query.filter_by(id=order_id).first()
+    # 修改订单的状态
+    order.status = 'REJECTED'
+    order.add_update()
+    return jsonify({'code': 200, 'msg': '请求成功'})
+
 
